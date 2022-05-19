@@ -21,6 +21,22 @@ jobs:
         with:
           node-version: '12'
  
+      # 缓存压缩 node_modules，不用每次下载，使用时解压，可以加快工作流的执行过程，超过 7 天没有使用将删除压缩包。
+      - name: Cache node modules
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 安装依赖
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          npm install
+
       # 从之前设置的 secret 获取部署私钥
       - name: Set up environment
         env:
@@ -31,11 +47,6 @@ jobs:
           echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      # 安装依赖
-      - name: Install dependencies
-        run: |
-          npm install
  
       # 生成并部署
       - name: Deploy
