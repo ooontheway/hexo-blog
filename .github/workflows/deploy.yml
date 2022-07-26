@@ -52,4 +52,4 @@ jobs:
       # 生成并部署
       - name: Deploy
         run: |
-          npx hexo clean && npx hexo g && npx hexo d
+          hexo clean && hexo deploy
