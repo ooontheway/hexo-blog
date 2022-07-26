@@ -1,34 +1,50 @@
-name: Hexo Github Actions
-on: [push]
+# 自动化名称
+name: Hexo Blog CI
+
+# 触发条件
+on:
+  push:
+    branches:
+      - main
+
+# 设置环境
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout source
-          uses: actions/checkout@v1
-        - name: Setup Node.js ${{ matrix.node_version }}
-          uses: actions/setup-node@v1
-          with:
-            node-version: ${{ matrix.node_version }}
-        - name: Cache NPM dependencies
-          uses: actions/cache@v2
-          with:
-            path: ~/.npm
-            key: ${{ runner.OS }}-npm-cache
-            restore-keys: |
-              ${{ runner.OS }}-npm-cache
-        - name: Setup hexo
-          env:
-            ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_PRI }}
-          run: |
-            mkdir -p ~/.ssh/
-            echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-            git config --global user.email "yourmailaddress"
-            git config --global user.name "yourname"
-            npm install hexo-cli -g
-            npm install
-        - name: Hexo deploy
-          run: |
-            npm run deploy
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # check it to your workflow can access it
+      # from: https://github.com/actions/checkout
+      - name: Checkout Repository master branch
+        uses: actions/checkout@master
+
+      # from: https://github.com/actions/setup-node
+      - name: Setup Node.js 15.x
+        uses: actions/setup-node@master
+        with:
+          node-version: "15.x"
+
+      - name: 安装Hexo
+        run: |
+          npm install hexo-cli -g
+          npm install
+
+      - name: 设置密钥
+        env:
+          HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa 
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts  
+
+      - name: 设置Git信息
+        run: |
+          git config --global user.name '你GitHub的用户名' 
+          git config --global user.email '你GitHub的邮箱'      
+
+      - name: Hexo三连
+        run: |
+          hexo clean
+          hexo generate 
+          hexo deploy
