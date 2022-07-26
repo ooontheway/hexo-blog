@@ -40,8 +40,8 @@ jobs:
 
       - name: 设置Git信息
         run: |
-          git config --global user.name '你GitHub的用户名' 
-          git config --global user.email '你GitHub的邮箱'      
+          git config --global user.name 'ooontheway' 
+          git config --global user.email '1395629286@qq.com'      
 
       - name: Hexo三连
         run: |
