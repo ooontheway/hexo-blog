@@ -31,16 +31,17 @@ jobs:
 
       - name: 设置密钥
         env:
-          HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY_PRIVATE_KEY }}
+          # HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY_PRIVATE_KEY }}
+          HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.PRI_ECDSA_DESKTOP_JPARFBO }}
         run: |
           mkdir -p ~/.ssh/
-          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa 
-          chmod 600 ~/.ssh/id_rsa
+          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_ecdsa
+          chmod 600 ~/.ssh/id_ecdsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts  
 
       - name: 设置Git信息
         run: |
-          git config --global user.name 'ooontheway' 
+          git config --global user.name 'chenjinhui' 
           git config --global user.email '1395629286@qq.com'      
 
       - name: Hexo三连
