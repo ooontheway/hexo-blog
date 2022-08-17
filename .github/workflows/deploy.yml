@@ -35,8 +35,8 @@ jobs:
           HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.PRI_ECDSA_DESKTOP_JPARFBO }}
         run: |
           mkdir -p ~/.ssh/
-          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_ecdsa
-          chmod 600 ~/.ssh/id_ecdsa
+          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: 设置Git信息
